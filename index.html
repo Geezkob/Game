@@ -81,7 +81,8 @@
         }
 
         h1 {
-            color: white;
+            font-family: 'Anton', sans-serif;
+			color: white;
             text-align: center;
             margin-bottom: 30px;
             font-size: 28px;
@@ -95,18 +96,26 @@
         }
 
         .num-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 30px 0;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            min-width: 100px;
-            height: 20px;
+            background: linear-gradient(
+        		135deg,
+        		#a8916a 0%,   /* lighter gold highlight */
+        		#837151 50%,  /* brand gold */
+        		#5f523c 100%  /* deeper shadow gold */
+    		);
+
+    	color: white;
+    	border: none;
+    	border-radius: 12px;
+    	padding: 30px 0;
+    	font-size: 20px;
+    	font-weight: bold;
+    	cursor: pointer;
+    	transition: transform 0.2s, box-shadow 0.2s;
+
+    	box-shadow: 0 6px 18px rgba(131, 113, 81, 0.45);
+
+    	min-width: 100px;
+    	height: 20px;
         }
 
         .num-btn:hover {
@@ -161,7 +170,7 @@
         }
 
         .modal h2 {
-            color: #667eea;
+            color: #837151;
             margin-bottom: 25px;
             font-size: 26px;
         }
@@ -177,7 +186,12 @@
         }
 
         .close-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(
+        		135deg,
+        		#a8916a 0%,   /* lighter gold highlight */
+        		#837151 50%,  /* brand gold */
+        		#5f523c 100%  /* deeper shadow gold */
+    		);
             color: white;
             border: none;
             padding: 14px 40px;
@@ -355,6 +369,7 @@
     </script>
 </body>
 </html>
+
 
 
 
