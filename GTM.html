@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelsey's Farewell Soiree</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @font-face {
+			font-family: 'Anton';
+			src: url('anton.ttf') format('truetype');
+		}
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-top: 40px;
+            
+            /* BACKGROUND IMAGE */
+            background-image: url('background1.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Dark overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: -1;
+        }
+
+        /* LOGO - Upper Left Corner */
+        .logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .logo img {
+            width: 300px;        /* Adjust size as needed */
+            height: auto;
+        }
+
+        /* HUGE TITLE */
+        .main-title {
+            font-family: 'Anton', sans-serif;
+			color: white;
+			font-size: 80px;
+			text-align: center;
+			margin-bottom: 10px;
+			text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+			line-height: 1.2;
+			padding-bottom: 400px;
+        }
+
+        .dashboard-container {
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        /* Grid for the buttons */
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .num-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 30px 0;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            min-width: 100px;
+            height: 20px;
+        }
+
+        .num-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .num-btn:active {
+            transform: translateY(0) scale(0.95);
+        }
+
+        /* Dark overlay background */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* Popup modal */
+        .modal {
+            background-color: white;
+            padding: 40px 50px;
+            border-radius: 20px;
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+            transform: scale(0.7);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 26px;
+        }
+
+        .modal p {
+            color: #333;
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            text-align: left;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .close-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Canvas for confetti */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGO - Upper Left -->
+    <div class="logo">
+        <img src="logo.jpg" alt="logo">
+    </div>
+
+    <!-- HUGE TITLE -->
+    <h1 class="main-title">Guess who wrote the memory 🤷</h1>
+
+    <!-- Dashboard -->
+    <div class="dashboard-container">
+        <h1>✨ Select a number ✨</h1>
+        <div class="number-grid" id="grid"></div>
+    </div>
+
+    <!-- Dark Overlay with Modal -->
+    <div class="overlay" id="overlay">
+        <div class="modal">
+            <h2 id="modal-title">Number</h2>
+            <p id="modal-text">Text goes here</p>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <script>
+        // 📝 EDIT YOUR TEXT HERE (1-15)
+        const contentData = [
+            "Probably when all of us went to the Piano Bar after an All Hands, and it was super late and there was a bunch of chaotic energy happening, Karl breakdancing? Kelsey wrangling all of us into ubers and making sure everyone got home safe? \n\nAlso I'm cheating and putting two, another good memory is when we all did karaoke as a company at Sidekicks and did some...insane music choices hahaha, there are videos out there somewhere. I always love seeing Kelsey dancing and laughing! TO THE WINDOWWWWW.....",
+            "My Earliest memory of Kelsey was during my second interview at Desire Co. I remember leaving that conversation thinking that if everyone's like her, I would love to work here. \n\nTwo and a half years later, I can confidently say there is truly no one else like Kelsey and how lucky we all are to have worked with her.I still remember the All Hands when we found out she was pregnant with twins! And then the next All Hands, she was a mom of three. From day one, every memory I have of Kelsey has been filled with joy, light, laughter, and fun.\n\nMost recently, I think about an Uber ride on the way back to the hotel the last time we were all in Chicago Kelsey and Maddy (who was actually the first person I interviewed with at Desire Co!). It really hit me how deeply Kelsey cares about this company and about the people in it. That kind of care is so rare.\n\nShe will be impossible to replace. I hope she keeps us posted on life, her beautiful family, and all the incredible things she's going to accomplish next. But more than anything, I hope she walks away knowing just how big of an impact she's had here.",
+            "Choreographing a little dance at Flight Club during All Hands 2025 that neither of us can remember the steps to now lol.",
+            "All Hands Event 2025 - Kelsey tried to mess up my dart throw but was unsuccessful...Looking forward to our next darts game Kelsey! Thank you for always being caring not only as a boss, but as a friend too. ",
+            "One of my favorite memories with Kelsey is from a couple years ago. After an All-Hands, a lot of us celebrated with karaoke & somehow we all ended up on stage together rapping & dancing to Get Low by Lil Jon!",
+            "I will never forget the guidance she gave me when it came to shaving my head! I was so worried and scared, and she was so forthcoming with tips, thoughts, and she was there for me as I started chemo. ",
+            "My Kelsey memory isn't really just one memory. It is more the overall calm, cool, and collected vibe that she brought to every encounter that really helped our team stay focused on the mission and making incredible things happen every day! \n\nThank You for being so great, Kelsey! ",
+            "My most vivid memory of Kelsey was meeting her for the first time, at my zoom interview. She brought such a great energy. Also, I love when she presents the team award at All-Hands. You can tell so much time, effort & love goes into each & every one of those. I will miss her kind leadership!",
+            "One of the sweetest memory, (pun intended) is when you ordered us each our fav ice cream to show up on our doorstep as a little pick me up. You remembered I wasn't a fan of ice cream and got me a cupcake instead. It was such a nice surprise coming home to that. You're the best!",
+            "Coming home from a night out to find her in my kitchen baking with my daughter. (Cementing her place as my daughter's favorite Desire Co. employee!)",
+            "One of my favorite things I learned from Kelsey: frozen fruit or waffles are a lifesaver for teething babies. My son loves them — and our whole family has you to thank for that, Kelsey.",
+            "Flight Club at All Hands 2025 !! ",
+            "We were staying in an Airbnb for a shoot. During filming we heard something that sounded like gun shots. At the end of filming Kelsey and I went to pick up food, only to return to the Airbnb to find the police had cordoned off the area. Turns out those were gun shots that had resulted in a death in the playground across the street. ",
+            "During our transition, we spent a lot of time in spreadsheets and data dumps, working through every detail so nothing fell through the cracks. What stood out wasn't just how thorough she was, but how she made the whole process feel collaborative instead of transactional. Even after the handoff, I always felt like I could come to her for anything. That openness meant a lot, especially early on.",
+            "BONUS: KELSEY HAS TO SHARE THE MOST PRECIOUS MEMORY SHE HAS SPENT ON HER TIME HERE IN TDC !! ",
+        ];
+
+        const gridContainer = document.getElementById('grid');
+        const overlay = document.getElementById('overlay');
+        const modalTitle = document.getElementById('modal-title');
+        const modalText = document.getElementById('modal-text');
+
+        // Generate buttons 1-15
+        for (let i = 1; i <= 15; i++) {
+            const button = document.createElement('button');
+            button.innerText = i;
+            button.classList.add('num-btn');
+            
+            button.addEventListener('click', () => {
+                showModal(i, contentData[i - 1]);
+                fireConfetti();
+            });
+
+            gridContainer.appendChild(button);
+        }
+
+        // Show modal with animation
+        function showModal(number, text) {
+            modalTitle.innerText = `Number ${number}`;
+            modalText.innerText = text;
+            overlay.classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            overlay.classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                closeModal();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // 🎊 Confetti Effect
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+
+        function fireConfetti() {
+            particles = [];
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#ffd700', '#ff6b6b'];
+            
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 20,
+                    vy: (Math.random() - 0.5) * 20 - 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 10 + 5,
+                    life: 100,
+                    gravity: 0.3
+                });
+            }
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += p.gravity;
+                p.life--;
+                p.size *= 0.97;
+
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+
+                if (p.life <= 0 || p.size < 0.5) {
+                    particles.splice(index, 1);
+                }
+            });
+
+            if (particles.length > 0) {
+                requestAnimationFrame(animateConfetti);
+            }
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
